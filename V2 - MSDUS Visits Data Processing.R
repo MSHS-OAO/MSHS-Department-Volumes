@@ -68,19 +68,6 @@ data_eIDXIDX_visits <- merge(data_eIDXIDX_visits, subset(dictionary_eIDX, select
 data_eIDXIDX_visits <- merge(x= data_eIDXIDX_visits, y= dictionary_pay_cylces, by.x = "SchDateId Date (MM/DD/YYYY)", by.y = "Date", all.x = T)
 
 
-# Subsetting eIDX/IDX Data ------------------------------------------------
-#Removing Dates
-choices_date_range_eIDX <- format(unique(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)`), "%m/%d/%Y")
-remove_dates_eIDX <- select.list(choices = c('None', choices_date_range_eIDX), title = "Any Dates to Remove?", multiple = T, graphics = T, preselect ='None' )
-if (remove_dates_eIDX != 'None' | is.na(remove_dates_eIDX)) {
-  remove_dates_eIDX<- as.Date(remove_dates_eIDX, tryFormats = "%m/%d/%Y")
-  data_eIDXIDX_visits<- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)` %in% remove_dates_eIDX),]
-} #remove dates if user chooses
-#Removing Departments and columns not used for Premier
-data_eIDXIDX_visits <- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`), c("Sch SchDept", "Sch SchLoc","Sch SchDeptSch SchLoc","SchDateId Date (MM/DD/YYYY)", "Sch Visit Num")]
-#Removing NA Vol IDs and Departments
-
-
 # Importing Epic Data -----------------------------------------------------
 list_path_data_Epic <- as.list(choose.files(caption = "Select Epic file(s)" , multi = T))
 list_data_Epic <- lapply(list_data_Epic, function(x) read_xlsx(path = x, sheet = 1, skip = 1))
@@ -104,3 +91,16 @@ data_Epic <- arrange(data_Epic, `Appt Date`, `Department`)
 data_Epic <- merge(x=data_Epic, y=dictionary_EPIC, by = 'Department', all.x = T)
 data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.y = 'Date', all.x = T)
 #subset(data_epic, select = c('Department', 'Appt Time'))
+# Merging Data from Epic & eIDX/IDX ------------------------------------------------
+#eIDX/IDX
+  choices_date_range_eIDX <- format(unique(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)`), "%m/%d/%Y")
+  remove_dates_eIDX <- select.list(choices = c('None', choices_date_range_eIDX), title = "Any Dates to Remove?", multiple = T, graphics = T, preselect ='None' )
+  if (remove_dates_eIDX != 'None' | is.na(remove_dates_eIDX)) {
+    remove_dates_eIDX<- as.Date(remove_dates_eIDX, tryFormats = "%m/%d/%Y")
+    data_eIDXIDX_visits<- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)` %in% remove_dates_eIDX),]
+  } #remove dates if user chooses
+  #Removing Departments and columns not used for Premier
+  data_eIDXIDX_visits <- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`), c("Sch SchDept", "Sch SchLoc","Sch SchDeptSch SchLoc","SchDateId Date (MM/DD/YYYY)", "Sch Visit Num")]
+  #Removing NA Vol IDs and Departments
+
+
