@@ -60,4 +60,5 @@ data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)` <- as.Date(data_eIDXIDX_visits
 data_eIDXIDX_visits$`Sch SchDept` <- as.character(data_eIDXIDX_visits$`Sch SchDept`)
 #Subset of Data Needed
 data_eIDXIDX_visits <- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`),c ("Sch SchDept", "Sch SchLoc","SchDateId Date (MM/DD/YYYY)", "Sch Visit Num")]
-  
+#Sorting data
+data_eIDXIDX_visits <- arrange(data_eIDXIDX_visits, `SchDateId Date (MM/DD/YYYY)`, `Sch SchDept`)
