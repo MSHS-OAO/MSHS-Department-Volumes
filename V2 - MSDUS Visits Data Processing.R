@@ -100,3 +100,7 @@ data_Epic <-merge_multiple_dataframes(list_data_Epic)
 data_Epic$`Appt Date` <- unname(sapply(data_Epic$Appt.Time, FUN= function(x) unlist(strsplit(x, ' '))[1])) # separating the Appt Time into Appt Date
 data_Epic$`Appt Date`<- as.Date(data_Epic$`Appt Date`, tryFormats = "%m/%d/%Y")
 data_Epic$Appt.Time <- paste(unname(sapply(data_Epic$Appt.Time, FUN= function(x) unlist(strsplit(x, ' '))[2])), unname(sapply(data_Epic$Appt.Time, FUN= function(x) unlist(strsplit(x, ' '))[3]))) # Replace the Appt Time Column with the Hour of the appointment
+data_Epic <- arrange(data_Epic, `Appt Date`, `Department`)
+data_Epic <- merge(x=data_Epic, y=dictionary_EPIC, by = 'Department', all.x = T)
+data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.y = 'Date', all.x = T)
+#subset(data_epic, select = c('Department', 'Appt Time'))
