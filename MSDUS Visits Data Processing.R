@@ -1,5 +1,6 @@
 # One Script Premier Formatting fot MSDUS Outpatient Data
 
+# User Requirements -------------------------------------------------------
 # A few notes to the user
 cat("Before executing the code:",fill = T)
 Sys.sleep(1) # pause in code for user to read comment
@@ -26,12 +27,14 @@ cat('', fill = T)
 cat('', fill = T)
 Sys.sleep(1)
 
-# Loading Packages
+# Loading Packages --------------------------------------------------------
 rm(list=ls()) #clears the working environment of all variables
 library(readxl)
 library(xlsx)
+library(dplyr)
 
 
+# Setting Folder to Export Files ------------------------------------------
 # User selects folder to export data
 cat("Select the Folder to Export the all Files to", fill = T)
 Sys.sleep(1)
@@ -43,19 +46,19 @@ cat('', fill = T)
 
 #eIDX/IDX Formatting##################################################################################################################################################
 # Setting up dictionaries - do not change the layout / names  of the columns or sheets in the excel files
-# Pay Cycle:
-pay_cylces_dictionary <-  read_xlsx('Pay Cycles.xlsx', sheet = 1, col_types = c('date', 'skip', 'skip', 'skip', 'skip','skip', 'skip','skip', 'skip','skip','date', 'date', 'skip'))
-#Cleaning Data
-pay_cylces_dictionary <- data.frame(apply(pay_cylces_dictionary, FUN= function(x) as.character(x), MARGIN = 2), stringsAsFactors = F) # converting dates to character strings
-pay_cylces_2019 <- subset(pay_cylces_dictionary,grepl('2019',pay_cylces_dictionary$Date, fixed = F))
-# Rollup + Department Map for Visits:
-rollup_department_map <- read_xlsx(path = 'DUS Main Dictionaries.xlsx', sheet = 'Sch Loc to Dept Map visit e.IDX', col_types = c('skip', 'skip', 'text', 'text', 'text','skip', 'skip', 'skip'))
-# Volume ID and Cost Center Dictionary - Premier:
-volume_dictionary_Premier <- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet = 'VolumeID to Cost center # Map', col_types = c('guess', 'text'), col_names = c('Volume ID', 'Cost Center'), skip = 1)
-# Volume ID (Premier),Type, and eIDX/idx Department Map:
-volume_dictionary_eIDX_departments <- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet = 'New eIDX visit - volID map', col_types = c('text', 'text', 'text', 'skip'))
-# Merging volID/departnent map with the cost center map
-volume_dictionary <- merge(x = volume_dictionary_eIDX_departments, y = volume_dictionary_Premier, by.x = "VolumeID", by.y = 'Volume ID', all.x = T )
+  # Pay Cycle:
+  pay_cylces_dictionary <-  read_xlsx('Pay Cycles.xlsx', sheet = 1, col_types = c('date', 'skip', 'skip', 'skip', 'skip','skip', 'skip','skip', 'skip','skip','date', 'date', 'skip'))
+    #Cleaning Data
+    #pay_cylces_dictionary <- data.frame(apply(pay_cylces_dictionary, FUN= function(x) as.character(x), MARGIN = 2), stringsAsFactors = F) # converting dates to character strings
+    #pay_cylces_2019 <- subset(pay_cylces_dictionary,grepl('2019',pay_cylces_dictionary$Date, fixed = F))
+  # Rollup + Department Map for Visits:
+  rollup_department_map <- read_xlsx(path = 'DUS Main Dictionaries.xlsx', sheet = 'Sch Loc to Dept Map visit e.IDX', col_types = c('skip', 'skip', 'text', 'text', 'text','skip', 'skip', 'skip'))
+  # Volume ID and Cost Center Dictionary - Premier:
+  volume_dictionary_Premier <- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet = 'VolumeID to Cost center # Map', col_types = c('guess', 'text'), col_names = c('Volume ID', 'Cost Center'), skip = 1)
+  # Volume ID (Premier),Type, and eIDX/idx Department Map:
+  volume_dictionary_eIDX_departments <- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet = 'New eIDX visit - volID map', col_types = c('text', 'text', 'text', 'skip'))
+  # Merging volID/departnent map with the cost center map
+  volume_dictionary <- merge(x = volume_dictionary_eIDX_departments, y = volume_dictionary_Premier, by.x = "VolumeID", by.y = 'Volume ID', all.x = T )
 
 
 # Uploading original file
@@ -63,7 +66,7 @@ answer_eIDX <- readline(prompt = "Is there an eIDX/IDX file? (Y/N): ")
 if (answer_eIDX == "Y" | answer_eIDX == "Yes" | answer_eIDX == "y" | answer_eIDX == "yes" | answer_eIDX == "yeah") {
 cat("Please select the eIDX/IDX file.", fill = T)
 Sys.sleep(2) #pausing code for 2 seconds for user to read the comment above
-file_name_eIDX <- file.choose() 
+file_name_eIDX <- file.choose(new = T) 
 cat('', fill = T)
 choices_sheets_eIDX<- c(excel_sheets(file_name_eIDX), "None")
 sheet_names_eIDX<- choices_sheets_eIDX
@@ -80,7 +83,7 @@ if(sheet_IDX=="None"){
   IDX_visits <- as.matrix(read_xlsx(path = file_name_eIDX, sheet =sheet_IDX))
 }
 
-all_eIDX_IDX_visits <- as.data.frame(rbind(eIDX_visits,na.omit(IDX_visits))) # I just added the na.omit function check to see if this works
+all_eIDX_IDX_visits <- as.data.frame(rbind(eIDX_visits,na.omit(IDX_visits)))
 
 
 #Cleaning Data
@@ -138,17 +141,6 @@ volume_eIDX_IDX$Budget<- rep(0, length(volume_eIDX_IDX$`Volume ID`))
 volume_eIDX_IDX <- subset(volume_eIDX_IDX, select = c('Entity ID','Facility ID',"Cost Center" ,'Start Date',"End Date", 'Volume ID','Volume', 'Budget'))
 
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 #Epic Formatting##################################################################################################################################################
@@ -240,19 +232,6 @@ volume_2$`Entity ID`<- rep(729805, length(volume_2$`Volume ID`))
 volume_2$`Facility ID`<- rep('630571', length(volume_2$`Volume ID`))
 volume_2$Budget<- rep(0, length(volume_2$`Volume ID`))
 volume_2 <- subset(volume_2, select = c('Entity ID','Facility ID',"Cost Center",'Start Date',"End Date",  'Volume ID','Volume', 'Budget'))
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
