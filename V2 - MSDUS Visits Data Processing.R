@@ -9,7 +9,7 @@ library(dplyr)
 dictionary_pay_cylces <-  read_xlsx('Pay Cycles.xlsx', sheet = 1, col_types = c('date', 'skip', 'skip', 'skip', 'skip','skip', 'skip','skip', 'skip','skip','date', 'date', 'skip'))
   dictionary_pay_cylces$Date <- as.Date(dictionary_pay_cylces$Date)
   dictionary_pay_cylces$`Start Date` <- as.Date(dictionary_pay_cylces$`Start Date` )
-  dictionary_pay_cylces$`End Date` <- as.Date(dictionary_pay_cylces$`Start Date` )
+  dictionary_pay_cylces$`End Date` <- as.Date(dictionary_pay_cylces$`End Date` )
 dictionary_Premier_volume<- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet = 'VolumeID to Cost center # Map', col_types = c('guess', 'text'), col_names = c('Volume ID', 'Cost Center'), skip = 1)
 
 #eIDX/IDX Dictionaries
