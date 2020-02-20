@@ -55,10 +55,18 @@ if(length(data_eIDX_visits)==1 | length(data_IDX_visits==1)){
 } #merging data from eIDX/IDX
 
 # Pre Processing eIDX/IDX Data --------------------------------------------
-data_eIDXIDX_visits$`Sch Visit Num` <- as.numeric(data_eIDXIDX_visits$`Sch Visit Num`)
+data_eIDXIDX_visits$`Sch Visit Num` <- as.numeric(as.character(data_eIDXIDX_visits$`Sch Visit Num`))
 data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)` <- as.Date(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)`, tryFormats = "%m/%d/%Y")
 data_eIDXIDX_visits$`Sch SchDept` <- as.character(data_eIDXIDX_visits$`Sch SchDept`)
-#Subset of Data Needed
+data_eIDXIDX_visits <- arrange(data_eIDXIDX_visits, `SchDateId Date (MM/DD/YYYY)`, `Sch SchDept`) #sorting data
+
+# Subsetting eIDX/IDX Data ------------------------------------------------
+choices_date_range_eIDX <- format(unique(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)`), "%m/%d/%Y")
+remove_dates_eIDX <- select.list(choices = c('None', choices_date_range_eIDX), title = "Any Dates to Remove?", multiple = T, graphics = T, preselect ='None' )
+if (remove_dates_eIDX != 'None' | is.na(remove_dates_eIDX)) {
+  remove_dates_eIDX<- as.Date(remove_dates_eIDX, tryFormats = "%m/%d/%Y")
+  data_eIDXIDX_visits<- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)` %in% remove_dates_eIDX),]
+} #remove dates if user chooses
+#Removing Departments and columns not used for Premier
 data_eIDXIDX_visits <- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`),c ("Sch SchDept", "Sch SchLoc","SchDateId Date (MM/DD/YYYY)", "Sch Visit Num")]
-#Sorting data
-data_eIDXIDX_visits <- arrange(data_eIDXIDX_visits, `SchDateId Date (MM/DD/YYYY)`, `Sch SchDept`)
+
