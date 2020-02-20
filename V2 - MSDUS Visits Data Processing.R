@@ -44,11 +44,11 @@ if (answer_eIDX == "Yes"){
 } #importing data
 if(length(data_eIDX_visits)==1 | length(data_IDX_visits==1)){
   if (length(data_IDX_visits)==1 & length(data_eIDX_visits)!=1 ) {
-    data_eIDXIDX_visits <- data_eIDX_visits
+    data_eIDXIDX_visits <- as.data.frame(data_eIDX_visits) 
   }else if (length(data_IDX_visits)!=1 &  length(data_eIDX_visits)!=1){
-    data_eIDXIDX_visits<- data_IDX_visits
+    data_eIDXIDX_visits <- as.data.frame(data_IDX_visits)
   }else{
-    data_eIDXIDX_visits<- merge.data.frame(data_eIDX_visits, data_IDX_visits, all.x = T, all.y = T)
+    data_eIDXIDX_visits <- merge.data.frame(data_eIDX_visits, data_IDX_visits, all.x = T, all.y = T)
   }
 } #merging data from eIDX/IDX
 
