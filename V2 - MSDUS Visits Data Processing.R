@@ -63,8 +63,13 @@ data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)` <- as.Date(data_eIDXIDX_visits
 data_eIDXIDX_visits$`Sch SchDept` <- as.character(data_eIDXIDX_visits$`Sch SchDept`)
 data_eIDXIDX_visits$`Sch SchDeptSch SchLoc` <- paste0(data_eIDXIDX_visits$`Sch SchDept`, data_eIDXIDX_visits$`Sch SchLoc`)
 data_eIDXIDX_visits <- arrange(data_eIDXIDX_visits, `SchDateId Date (MM/DD/YYYY)`, `Sch SchDeptSch SchLoc`) #sorting data
+data_eIDXIDX_visits <- merge(x = data_eIDXIDX_visits, y = dictionary_eIDX_rollup_department, by = "Sch SchDeptSch SchLoc", all.x = T)
+data_eIDXIDX_visits <- merge(data_eIDXIDX_visits, subset(dictionary_eIDX, select = c('Department','VolumeID','Cost Center')), by ="Department", all.x = T )
+data_eIDXIDX_visits <- merge(x= data_eIDXIDX_visits, y= dictionary_pay_cylces, by.x = "SchDateId Date (MM/DD/YYYY)", by.y = "Date", all.x = T)
+
 
 # Subsetting eIDX/IDX Data ------------------------------------------------
+#Removing Dates
 choices_date_range_eIDX <- format(unique(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)`), "%m/%d/%Y")
 remove_dates_eIDX <- select.list(choices = c('None', choices_date_range_eIDX), title = "Any Dates to Remove?", multiple = T, graphics = T, preselect ='None' )
 if (remove_dates_eIDX != 'None' | is.na(remove_dates_eIDX)) {
@@ -73,9 +78,4 @@ if (remove_dates_eIDX != 'None' | is.na(remove_dates_eIDX)) {
 } #remove dates if user chooses
 #Removing Departments and columns not used for Premier
 data_eIDXIDX_visits <- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`),c ("Sch SchDept", "Sch SchLoc","Sch SchDeptSch SchLoc","SchDateId Date (MM/DD/YYYY)", "Sch Visit Num")]
-
-
-# Formatting eIDX/IDX Data ------------------------------------------------
-data_eIDXIDX_visits <- merge(x = data_eIDXIDX_visits, y = dictionary_eIDX_rollup_department, by = "Sch SchDeptSch SchLoc", all.x = T)
-data_eIDXIDX_visits <- merge(data_eIDXIDX_visits, subset(dictionary_eIDX, select = c('Department','VolumeID','Cost Center')), by ="Department", all.x = T )
-data_eIDXIDX_visits <- merge(x= data_eIDXIDX_visits, y= dictionary_pay_cylces, by.x = "SchDateId Date (MM/DD/YYYY)", by.y = "Date", all.x = T)
+#Removing NA Vol IDs and Departments
