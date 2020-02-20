@@ -82,5 +82,21 @@ data_eIDXIDX_visits <- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %
 
 
 # Importing Epic Data -----------------------------------------------------
-list_data_Epic <- as.list(choose.files(caption = "Select Epic file(s)" , multi = T))
-data_Epic<- lapply(list_data_Epic, function(x) read_xlsx(path = x, sheet = 1, skip = 1))
+list_path_data_Epic <- as.list(choose.files(caption = "Select Epic file(s)" , multi = T))
+list_data_Epic <- lapply(list_data_Epic, function(x) read_xlsx(path = x, sheet = 1, skip = 1))
+
+# Pre Processing Epic Data ------------------------------------------------
+  merge_multiple_dataframes <- function(list.dfs){
+  if(length(list.dfs) == 1){
+    return(as.data.frame(list.dfs[1]))
+  }
+  output<- list.dfs[1]
+  for (i in 2:length(list.dfs)){
+    output <- merge.data.frame(output, list.dfs[i], all.x = T, all.y = T)
+  }
+  return(output)
+}
+data_Epic <-merge_multiple_dataframes(list_data_Epic)
+data_Epic$`Appt Date` <- unname(sapply(data_Epic$Appt.Time, FUN= function(x) unlist(strsplit(x, ' '))[1])) # separating the Appt Time into Appt Date
+data_Epic$`Appt Date`<- as.Date(data_Epic$`Appt Date`, tryFormats = "%m/%d/%Y")
+data_Epic$Appt.Time <- paste(unname(sapply(data_Epic$Appt.Time, FUN= function(x) unlist(strsplit(x, ' '))[2])), unname(sapply(data_Epic$Appt.Time, FUN= function(x) unlist(strsplit(x, ' '))[3]))) # Replace the Appt Time Column with the Hour of the appointment
