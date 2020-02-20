@@ -16,7 +16,9 @@ dictionary_Premier_volume<- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet =
   dictionary_eIDX_departments <- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet = 'New eIDX visit - volID map', col_types = c('text', 'text', 'text', 'skip'))
   # Merging volID/departnent map with the cost center map
   dictionary_eIDX <- merge(x = dictionary_eIDX_departments, y = dictionary_Premier_volume, by.x = "VolumeID", by.y = 'Volume ID', all.x = T )
-
+  #Departments to Remove
+  remove_departments_eIDX <- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet = 'eIDX_IDX Departments to Remove')
+  
 #Epic Dictionaries
   #Importing the Dictionaries
   dictionary_department_VolID_Epic <- read_xlsx('DUS Main Dictionaries.xlsx', sheet = 'New Epic Volume ID Map',col_types = c('text', 'text', 'skip'))
@@ -53,6 +55,9 @@ if(length(data_eIDX_visits)==1 | length(data_IDX_visits==1)){
 } #merging data from eIDX/IDX
 
 # Pre Processing eIDX/IDX Data --------------------------------------------
-
-
-
+data_eIDXIDX_visits$`Sch Visit Num` <- as.numeric(data_eIDXIDX_visits$`Sch Visit Num`)
+data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)` <- as.Date(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)`, tryFormats = "%m/%d/%Y")
+data_eIDXIDX_visits$`Sch SchDept` <- as.character(data_eIDXIDX_visits$`Sch SchDept`)
+#Subset of Data Needed
+data_eIDXIDX_visits <- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`),c ("Sch SchDept", "Sch SchLoc","SchDateId Date (MM/DD/YYYY)", "Sch Visit Num")]
+  
