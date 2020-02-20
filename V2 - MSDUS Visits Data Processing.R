@@ -77,5 +77,10 @@ if (remove_dates_eIDX != 'None' | is.na(remove_dates_eIDX)) {
   data_eIDXIDX_visits<- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)` %in% remove_dates_eIDX),]
 } #remove dates if user chooses
 #Removing Departments and columns not used for Premier
-data_eIDXIDX_visits <- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`),c ("Sch SchDept", "Sch SchLoc","Sch SchDeptSch SchLoc","SchDateId Date (MM/DD/YYYY)", "Sch Visit Num")]
+data_eIDXIDX_visits <- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`), c("Sch SchDept", "Sch SchLoc","Sch SchDeptSch SchLoc","SchDateId Date (MM/DD/YYYY)", "Sch Visit Num")]
 #Removing NA Vol IDs and Departments
+
+
+# Importing Epic Data -----------------------------------------------------
+list_data_Epic <- as.list(choose.files(caption = "Select Epic file(s)" , multi = T))
+data_Epic<- lapply(list_data_Epic, function(x) read_xlsx(path = x, sheet = 1, skip = 1))
