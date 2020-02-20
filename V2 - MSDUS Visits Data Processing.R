@@ -7,11 +7,14 @@ library(dplyr)
 
 # Importing Dictionaries --------------------------------------------------
 dictionary_pay_cylces <-  read_xlsx('Pay Cycles.xlsx', sheet = 1, col_types = c('date', 'skip', 'skip', 'skip', 'skip','skip', 'skip','skip', 'skip','skip','date', 'date', 'skip'))
+  dictionary_pay_cylces$Date <- as.Date(dictionary_pay_cylces$Date)
+  dictionary_pay_cylces$`Start Date` <- as.Date(dictionary_pay_cylces$`Start Date` )
+  dictionary_pay_cylces$`End Date` <- as.Date(dictionary_pay_cylces$`Start Date` )
 dictionary_Premier_volume<- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet = 'VolumeID to Cost center # Map', col_types = c('guess', 'text'), col_names = c('Volume ID', 'Cost Center'), skip = 1)
 
 #eIDX/IDX Dictionaries
   # Rollup + Department Map for Visits:
-  dictionary_rollup_department <- read_xlsx(path = 'DUS Main Dictionaries.xlsx', sheet = 'Sch Loc to Dept Map visit e.IDX', col_types = c('skip', 'skip', 'text', 'text', 'text','skip', 'skip', 'skip'))
+  dictionary_eIDX_rollup_department <- read_xlsx(path = 'DUS Main Dictionaries.xlsx', sheet = 'Sch Loc to Dept Map visit e.IDX', col_types = c('skip', 'skip', 'text', 'text', 'text','skip', 'skip', 'skip'))
   # Volume ID (Premier),Type, and eIDX/idx Department Map:
   dictionary_eIDX_departments <- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet = 'New eIDX visit - volID map', col_types = c('text', 'text', 'text', 'skip'))
   # Merging volID/departnent map with the cost center map
@@ -21,7 +24,7 @@ dictionary_Premier_volume<- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet =
   
 #Epic Dictionaries
   #Importing the Dictionaries
-  dictionary_department_VolID_Epic <- read_xlsx('DUS Main Dictionaries.xlsx', sheet = 'New Epic Volume ID Map',col_types = c('text', 'text', 'skip'))
+  dictionary_Epic_department_VolID <- read_xlsx('DUS Main Dictionaries.xlsx', sheet = 'New Epic Volume ID Map',col_types = c('text', 'text', 'skip'))
   #Merging Dictionaries into one
   dictionary_EPIC <- merge(dictionary_department_VolID_Epic, dictionary_Premier_volume, by.x = 'Volume ID', by.y = 'Volume ID')
  
@@ -58,7 +61,8 @@ if(length(data_eIDX_visits)==1 | length(data_IDX_visits==1)){
 data_eIDXIDX_visits$`Sch Visit Num` <- as.numeric(as.character(data_eIDXIDX_visits$`Sch Visit Num`))
 data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)` <- as.Date(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)`, tryFormats = "%m/%d/%Y")
 data_eIDXIDX_visits$`Sch SchDept` <- as.character(data_eIDXIDX_visits$`Sch SchDept`)
-data_eIDXIDX_visits <- arrange(data_eIDXIDX_visits, `SchDateId Date (MM/DD/YYYY)`, `Sch SchDept`) #sorting data
+data_eIDXIDX_visits$`Sch SchDeptSch SchLoc` <- paste0(data_eIDXIDX_visits$`Sch SchDept`, data_eIDXIDX_visits$`Sch SchLoc`)
+data_eIDXIDX_visits <- arrange(data_eIDXIDX_visits, `SchDateId Date (MM/DD/YYYY)`, `Sch SchDeptSch SchLoc`) #sorting data
 
 # Subsetting eIDX/IDX Data ------------------------------------------------
 choices_date_range_eIDX <- format(unique(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)`), "%m/%d/%Y")
@@ -68,5 +72,10 @@ if (remove_dates_eIDX != 'None' | is.na(remove_dates_eIDX)) {
   data_eIDXIDX_visits<- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)` %in% remove_dates_eIDX),]
 } #remove dates if user chooses
 #Removing Departments and columns not used for Premier
-data_eIDXIDX_visits <- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`),c ("Sch SchDept", "Sch SchLoc","SchDateId Date (MM/DD/YYYY)", "Sch Visit Num")]
+data_eIDXIDX_visits <- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`),c ("Sch SchDept", "Sch SchLoc","Sch SchDeptSch SchLoc","SchDateId Date (MM/DD/YYYY)", "Sch Visit Num")]
 
+
+# Formatting eIDX/IDX Data ------------------------------------------------
+data_eIDXIDX_visits <- merge(x = data_eIDXIDX_visits, y = dictionary_eIDX_rollup_department, by = "Sch SchDeptSch SchLoc", all.x = T)
+data_eIDXIDX_visits <- merge(data_eIDXIDX_visits, subset(dictionary_eIDX, select = c('Department','VolumeID','Cost Center')), by ="Department", all.x = T )
+data_eIDXIDX_visits <- merge(x= data_eIDXIDX_visits, y= dictionary_pay_cylces, by.x = "SchDateId Date (MM/DD/YYYY)", by.y = "Date", all.x = T)
