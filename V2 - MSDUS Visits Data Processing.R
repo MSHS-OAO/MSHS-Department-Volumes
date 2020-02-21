@@ -111,7 +111,12 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
       remove_dates_Epic<- as.Date(remove_dates_Epic, tryFormats = "%m/%d/%Y")
       data_Epic_merge<- data_Epic[!(data_Epic$`Appt Date` %in% remove_dates_Epic),]
     } #remove dates if user chooses 
-#Removing NA Vol IDs and Cost Centers
+#Selecting only needed columns
+    data_eIDXIDX_merge <- data_eIDXIDX_merge[, c('Cost Center','Start Date','End Date','VolumeID')]
+    data_Epic_merge <- data_Epic_merge[,c('Cost Center','Start Date','End Date','Volume ID')]
+#Merging Data    
+  data_visits <- merge(data_eIDXIDX_merge, data_Epic_merge, by.x = , by.y = , all = T)
+#Removing NA Vol IDs and Cost Centers - merge first
   #eIDX/IDX
   remove_vol_NAs_eIDX <- data_eIDXIDX_merge[which(is.na(data_eIDXIDX_merge$VolumeID)),]
   remove_CC_NAs_eIDX <- data_eIDXIDX_merge[which(is.na(data_eIDXIDX_merge$`Cost Center`)),]
@@ -122,10 +127,6 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
   remove_CC_NAs_Epic <- data_Epic_merge[which(is.na(data_Epic_merge$`Cost Center`)),]
   remove_NAs_Epic <- merge(remove_vol_NAs_Epic, remove_CC_NAs_Epic)
   data_Epic_merge <- data_Epic_merge[!data_Epic_merge$`Volume ID` %in% remove_NAs_Epic$`Volume ID`,]
-#Selecting only needed columns
-    #eIDX/IDX
-    #[,c("Sch SchDept", "Sch SchLoc","Sch SchDeptSch SchLoc","SchDateId Date (MM/DD/YYYY)", "Sch Visit Num")]
-    #Epic
-      #subset(data_epic, select = c('Department', 'Appt Time'))
-#Merging Data
+
+
 
