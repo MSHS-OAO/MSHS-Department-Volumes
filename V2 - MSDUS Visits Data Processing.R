@@ -116,17 +116,13 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
     data_Epic_merge <- data_Epic_merge[,c('Cost Center','Start Date','End Date','Volume ID')]
 #Merging Data    
   data_visits <- merge(data_eIDXIDX_merge, data_Epic_merge, by.x =c('Cost Center','Start Date','End Date','VolumeID'), by.y =c('Cost Center','Start Date','End Date','Volume ID'), all = T)
-#Removing NA Vol IDs and Cost Centers - merge first
-  #eIDX/IDX
-  remove_vol_NAs_eIDX <- data_eIDXIDX_merge[which(is.na(data_eIDXIDX_merge$VolumeID)),]
-  remove_CC_NAs_eIDX <- data_eIDXIDX_merge[which(is.na(data_eIDXIDX_merge$`Cost Center`)),]
-  remove_NAs_eIDX <- merge(remove_vol_NAs_eIDX, remove_CC_NAs_eIDX)
-  data_eIDXIDX_merge <- data_eIDXIDX_merge[!data_eIDXIDX_merge$VolumeID %in% remove_NAs_eIDX$VolumeID,]
-  #Epic
-  remove_vol_NAs_Epic <- data_Epic_merge[which(is.na(data_Epic_merge$`Volume ID`)),]
-  remove_CC_NAs_Epic <- data_Epic_merge[which(is.na(data_Epic_merge$`Cost Center`)),]
-  remove_NAs_Epic <- merge(remove_vol_NAs_Epic, remove_CC_NAs_Epic)
-  data_Epic_merge <- data_Epic_merge[!data_Epic_merge$`Volume ID` %in% remove_NAs_Epic$`Volume ID`,]
-
-
-
+#Removing NA Vol IDs and Cost Centers
+  remove_NA_vol <- data_visits[which(is.na(data_visits$VolumeID)),]
+  if(length(remove_NA_vol$VolumeID) != 0){
+    data_visits <- data_visits[!data_visits$VolumeID %in% remove_NA_vol$VolumeID,]
+  }
+  remove_NA_CC <- data_visits[which(is.na(data_visits$`Cost Center`)),]
+  if(length(remove_NA_CC$`Cost Center`) != 0){
+    data_visits <- data_visits[!data_visits$`Cost Center` %in% remove_NA_CC$`Cost Center`,]
+  }
+  
