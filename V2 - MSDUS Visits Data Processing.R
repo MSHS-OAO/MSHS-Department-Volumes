@@ -126,3 +126,11 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
     data_visits <- data_visits[!data_visits$`Cost Center` %in% remove_NA_CC$`Cost Center`,]
   }
   
+
+# Creating Premier Upload -------------------------------------------------
+data_visits$`Entity ID`<- rep('729805', length(data_visits$`Cost Center`))
+data_visits$`Facility ID`<- rep('630571', length(data_visits$`Cost Center`))
+data_visits$Budget <- rep('0', length(data_visits$`Cost Center`))
+data_visits$Volume <- rep(1 , length(data_visits$`Cost Center`))
+  
+  
