@@ -1,9 +1,7 @@
-
 # Loading Libraries -------------------------------------------------------
 library(readxl)
 library(xlsx)
 library(dplyr)
-
 
 # Importing Dictionaries --------------------------------------------------
 dictionary_pay_cylces <-  read_xlsx('Pay Cycles.xlsx', sheet = 1, col_types = c('date', 'skip', 'skip', 'skip', 'skip','skip', 'skip','skip', 'skip','skip','date', 'date', 'skip'))
@@ -11,7 +9,6 @@ dictionary_pay_cylces <-  read_xlsx('Pay Cycles.xlsx', sheet = 1, col_types = c(
   dictionary_pay_cylces$`Start Date` <- as.Date(dictionary_pay_cylces$`Start Date` )
   dictionary_pay_cylces$`End Date` <- as.Date(dictionary_pay_cylces$`End Date` )
 dictionary_Premier_volume<- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet = 'VolumeID to Cost center # Map', col_types = c('guess', 'text'), col_names = c('Volume ID', 'Cost Center'), skip = 1)
-
 #eIDX/IDX Dictionaries
   # Rollup + Department Map for Visits:
   dictionary_eIDX_rollup_department <- read_xlsx(path = 'DUS Main Dictionaries.xlsx', sheet = 'Sch Loc to Dept Map visit e.IDX', col_types = c('skip', 'skip', 'text', 'text', 'text','skip', 'skip', 'skip'))
@@ -21,7 +18,6 @@ dictionary_Premier_volume<- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet =
   dictionary_eIDX <- merge(x = dictionary_eIDX_departments, y = dictionary_Premier_volume, by.x = "VolumeID", by.y = 'Volume ID', all.x = T )
   #Departments to Remove
   remove_departments_eIDX <- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet = 'eIDX_IDX Departments to Remove')
-  
 #Epic Dictionaries
   #Importing the Dictionaries
   dictionary_Epic_department_VolID <- read_xlsx('DUS Main Dictionaries.xlsx', sheet = 'New Epic Volume ID Map',col_types = c('text', 'text', 'skip'))
@@ -67,7 +63,6 @@ data_eIDXIDX_visits <- arrange(data_eIDXIDX_visits, `SchDateId Date (MM/DD/YYYY)
 data_eIDXIDX_visits <- merge(x = data_eIDXIDX_visits, y = dictionary_eIDX_rollup_department, by = "Sch SchDeptSch SchLoc", all.x = T)
 data_eIDXIDX_visits <- merge(data_eIDXIDX_visits, subset(dictionary_eIDX, select = c('Department','VolumeID','Cost Center')), by ="Department", all.x = T )
 data_eIDXIDX_visits <- merge(x= data_eIDXIDX_visits, y= dictionary_pay_cylces, by.x = "SchDateId Date (MM/DD/YYYY)", by.y = "Date", all.x = T)
-
 
 # Importing Epic Data -----------------------------------------------------
 list_path_data_Epic <- as.list(choose.files(caption = "Select Epic file(s)" , multi = T))
@@ -125,7 +120,6 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
   if(length(remove_NA_CC$`Cost Center`) != 0){
     data_visits <- data_visits[!data_visits$`Cost Center` %in% remove_NA_CC$`Cost Center`,]
   }
-  
 
 # Creating Premier Upload -------------------------------------------------
 #Created needed columns
@@ -144,4 +138,3 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
 file_name_Premier <- paste0("MSDUS_Department Volumes_", format(range(data_visits$`Start Date`)[1], "%d%b%Y"), " to ", format(range(data_visits$`End Date`)[2], "%d%b%Y"),".csv")
 path_folder_Premier_export  <- choose.dir(caption = "Select folder to export Premier upload file")
 write.table(data_visits, file =paste0(path_folder_Premier_export,"\\", file_name_Premier), row.names = F, col.names = F, sep = ',')
-  
