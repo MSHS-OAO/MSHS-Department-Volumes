@@ -136,5 +136,11 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
 #Aggregating Data
   data_visits <- aggregate(data_visits$Volume, by = list(data_visits$`Entity ID`, data_visits$`Facility ID`, data_visits$`Cost Center`, data_visits$`Start Date`, data_visits$`End Date`, data_visits$VolumeID, data_visits$Budget), FUN = 'sum' )
   colnames(data_visits) <- c('Corporate ID', 'Facility ID', 'Cost Center', 'Start Date', 'End Date', 'Volume ID', 'Budget', 'Volume')
+#Formatting Data
   data_visits <- arrange(data_visits,`Start Date`, `End Date`, `Cost Center`, `Volume ID`)
+  data_visits <- subset(data_visits, select = c('Corporate ID', 'Facility ID', 'Cost Center', 'Start Date', 'End Date', 'Volume ID', 'Volume', 'Budget'))
+
+# Exporting Premier Upload File -------------------------------------------
+file_name_Premier <- paste0("MSDUS_Department Volumes_", format(range(data_visits$`Start Date`)[1], "%d%b%Y"), " to ", format(range(data_visits$`End Date`)[2], "%d%b%Y"),".csv")
+write.table(data_visits, file = file_name_Premier, row.names = F, col.names = F, sep = ',')
   
