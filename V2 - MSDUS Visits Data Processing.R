@@ -94,10 +94,8 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
 
 # Merging Data from Epic & eIDX/IDX ------------------------------------------------
 #Removing Departments
-    #eIDX/IDX
-      data_eIDXIDX_merge<- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`),]
-    #Epic 
-      data_Epic_merge<- data_Epic[!(data_Epic$`Sch SchDept` %in% remove_departments_Epic),]
+  data_eIDXIDX_merge<- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`),]
+  data_Epic_merge<- data_Epic[!(data_Epic$`Sch SchDept` %in% remove_departments_Epic),]
 #Date Range Check 
   #eIDX/IDX
     choices_date_range_eIDX <- format(unique(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)`), "%m/%d/%Y")
