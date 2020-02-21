@@ -93,6 +93,11 @@ data_Epic <- merge(x=data_Epic, y=dictionary_EPIC, by = 'Department', all.x = T)
 data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.y = 'Date', all.x = T)
 
 # Merging Data from Epic & eIDX/IDX ------------------------------------------------
+#Removing Departments
+    #eIDX/IDX
+      data_eIDXIDX_merge<- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`),]
+    #Epic 
+      data_Epic_merge<- data_Epic[!(data_Epic$`Sch SchDept` %in% remove_departments_Epic),]
 #Date Range Check 
   #eIDX/IDX
     choices_date_range_eIDX <- format(unique(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)`), "%m/%d/%Y")
@@ -108,11 +113,7 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
       remove_dates_Epic<- as.Date(remove_dates_Epic, tryFormats = "%m/%d/%Y")
       data_Epic_merge<- data_Epic[!(data_Epic$`Appt Date` %in% remove_dates_Epic),]
     } #remove dates if user chooses 
-#Removing Departments
-    #eIDX/IDX
-      data_eIDXIDX_merge<- data_eIDXIDX_merge[!(data_eIDXIDX_merge$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`),]
-    #Epic 
-      data_Epic_merge<- data_Epic_merge[!(data_Epic_merge$`Sch SchDept` %in% remove_de)]
+
 #Removing NA Vol IDs and Departments
 #Selecting only needed columns
     #eIDX/IDX
