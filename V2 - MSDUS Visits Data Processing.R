@@ -90,7 +90,7 @@ data_Epic$Appt.Time <- paste(unname(sapply(data_Epic$Appt.Time, FUN= function(x)
 data_Epic <- arrange(data_Epic, `Appt Date`, `Department`)
 data_Epic <- merge(x=data_Epic, y=dictionary_EPIC, by = 'Department', all.x = T)
 data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.y = 'Date', all.x = T)
-#subset(data_epic, select = c('Department', 'Appt Time'))
+
 # Merging Data from Epic & eIDX/IDX ------------------------------------------------
 ##change to non destructive subseting, create new variable if any data is being excluded
 #Date Range Check 
@@ -99,18 +99,25 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
     remove_dates_eIDX <- select.list(choices = c('None', choices_date_range_eIDX), title = "eIDX/IDX: Any Dates to Remove?", multiple = T, graphics = T, preselect ='None' )
     if (remove_dates_eIDX != 'None' | is.na(remove_dates_eIDX)) {
       remove_dates_eIDX<- as.Date(remove_dates_eIDX, tryFormats = "%m/%d/%Y")
-      data_eIDXIDX_visits<- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)` %in% remove_dates_eIDX),]
+      data_eIDXIDX_merge<- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)` %in% remove_dates_eIDX),]
     } #remove dates if user chooses
   #Epic
     choices_date_range_Epic <- format(unique(data_Epic$`Appt Date`), "%m/%d/%Y")
     remove_dates_Epic <- select.list(choices = c('None', choices_date_range_Epic), title = "eIDX/IDX: Any Dates to Remove?", multiple = T, graphics = T, preselect ='None' )
     if (remove_dates_Epic != 'None' | is.na(remove_dates_Epic)) {
       remove_dates_Epic<- as.Date(remove_dates_Epic, tryFormats = "%m/%d/%Y")
-      data_Epic<- data_Epic[!(data_Epic$`Appt Date` %in% remove_dates_Epic),]
+      data_Epic_merge<- data_Epic[!(data_Epic$`Appt Date` %in% remove_dates_Epic),]
     } #remove dates if user chooses 
-#Removing Departments and columns not used for Premier
+#Removing Departments
     #eIDX/IDX
-      data_eIDXIDX_visits <- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`), c("Sch SchDept", "Sch SchLoc","Sch SchDeptSch SchLoc","SchDateId Date (MM/DD/YYYY)", "Sch Visit Num")]
-    #Removing NA Vol IDs and Departments
-
+      data_eIDXIDX_merge<- data_eIDXIDX_merge[!(data_eIDXIDX_merge$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`),]
+    #Epic 
+      data_Epic_merge
+#Removing NA Vol IDs and Departments
+#Selecting only needed columns
+    #eIDX/IDX
+    #[,c("Sch SchDept", "Sch SchLoc","Sch SchDeptSch SchLoc","SchDateId Date (MM/DD/YYYY)", "Sch Visit Num")]
+    #Epic
+      #subset(data_epic, select = c('Department', 'Appt Time'))
+#Merging Data
 
