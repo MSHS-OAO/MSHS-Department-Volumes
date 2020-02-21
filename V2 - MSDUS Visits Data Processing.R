@@ -115,7 +115,7 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
     data_eIDXIDX_merge <- data_eIDXIDX_merge[, c('Cost Center','Start Date','End Date','VolumeID')]
     data_Epic_merge <- data_Epic_merge[,c('Cost Center','Start Date','End Date','Volume ID')]
 #Merging Data    
-  data_visits <- merge(data_eIDXIDX_merge, data_Epic_merge, by.x = , by.y = , all = T)
+  data_visits <- merge(data_eIDXIDX_merge, data_Epic_merge, by.x =c('Cost Center','Start Date','End Date','VolumeID'), by.y =c('Cost Center','Start Date','End Date','Volume ID'), all = T)
 #Removing NA Vol IDs and Cost Centers - merge first
   #eIDX/IDX
   remove_vol_NAs_eIDX <- data_eIDXIDX_merge[which(is.na(data_eIDXIDX_merge$VolumeID)),]
