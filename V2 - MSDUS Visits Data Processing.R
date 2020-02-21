@@ -128,9 +128,13 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
   
 
 # Creating Premier Upload -------------------------------------------------
-data_visits$`Entity ID`<- rep('729805', length(data_visits$`Cost Center`))
-data_visits$`Facility ID`<- rep('630571', length(data_visits$`Cost Center`))
-data_visits$Budget <- rep('0', length(data_visits$`Cost Center`))
-data_visits$Volume <- rep(1 , length(data_visits$`Cost Center`))
-  
+#Created needed columns
+  data_visits$`Entity ID`<- rep('729805', length(data_visits$`Cost Center`))
+  data_visits$`Facility ID`<- rep('630571', length(data_visits$`Cost Center`))
+  data_visits$Budget <- rep('0', length(data_visits$`Cost Center`))
+  data_visits$Volume <- rep(1 , length(data_visits$`Cost Center`))
+#Aggregating Data
+  data_visits <- aggregate(data_visits$Volume, by = list(data_visits$`Entity ID`, data_visits$`Facility ID`, data_visits$`Cost Center`, data_visits$`Start Date`, data_visits$`End Date`, data_visits$VolumeID, data_visits$Budget), FUN = 'sum' )
+  colnames(data_visits) <- c('Corporate ID', 'Facility ID', 'Cost Center', 'Start Date', 'End Date', 'Volume ID', 'Budget', 'Volume')
+  data_visits <- arrange(data_visits,`Start Date`, `End Date`, `Cost Center`, `Volume ID`)
   
