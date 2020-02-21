@@ -27,7 +27,8 @@ dictionary_Premier_volume<- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet =
   dictionary_Epic_department_VolID <- read_xlsx('DUS Main Dictionaries.xlsx', sheet = 'New Epic Volume ID Map',col_types = c('text', 'text', 'skip'))
   #Merging Dictionaries into one
   dictionary_EPIC <- merge(dictionary_department_VolID_Epic, dictionary_Premier_volume, by.x = 'Volume ID', by.y = 'Volume ID')
- 
+  #Departments to Remove
+  remove_departments_Epic <-  dictionary_Epic_department_VolID[dictionary_Epic_department_VolID$`Volume ID` %in% c('X', 'TBD'), 'Department']
 
 # Importing eIDX/IDX Data -------------------------------------------------
 answer_eIDX<- select.list(choices =c('Yes','No'), title = 'Is there an eIDX/IDX file?',multiple = F, graphics = T )
@@ -92,7 +93,6 @@ data_Epic <- merge(x=data_Epic, y=dictionary_EPIC, by = 'Department', all.x = T)
 data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.y = 'Date', all.x = T)
 
 # Merging Data from Epic & eIDX/IDX ------------------------------------------------
-##change to non destructive subseting, create new variable if any data is being excluded
 #Date Range Check 
   #eIDX/IDX
     choices_date_range_eIDX <- format(unique(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)`), "%m/%d/%Y")
@@ -112,7 +112,7 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
     #eIDX/IDX
       data_eIDXIDX_merge<- data_eIDXIDX_merge[!(data_eIDXIDX_merge$`Sch SchDept` %in% remove_departments_eIDX$`Sch SchDept`),]
     #Epic 
-      data_Epic_merge
+      data_Epic_merge<- data_Epic_merge[!(data_Epic_merge$`Sch SchDept` %in% remove_de)]
 #Removing NA Vol IDs and Departments
 #Selecting only needed columns
     #eIDX/IDX
