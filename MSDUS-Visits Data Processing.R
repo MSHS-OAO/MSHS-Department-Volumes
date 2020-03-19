@@ -22,7 +22,7 @@ dictionary_Premier_volume<- read_xlsx(path='DUS Main Dictionaries.xlsx', sheet =
   #Importing the Dictionaries
   dictionary_Epic_department_VolID <- read_xlsx('DUS Main Dictionaries.xlsx', sheet = 'New Epic Volume ID Map',col_types = c('text', 'text', 'skip'))
   #Merging Dictionaries into one
-  dictionary_EPIC <- merge(dictionary_department_VolID_Epic, dictionary_Premier_volume, by.x = 'Volume ID', by.y = 'Volume ID')
+  dictionary_EPIC <- merge(dictionary_Epic_department_VolID , dictionary_Premier_volume, by.x = 'Volume ID', by.y = 'Volume ID')
   #Departments to Remove
   remove_departments_Epic <-  dictionary_Epic_department_VolID[dictionary_Epic_department_VolID$`Volume ID` %in% c('X', 'TBD'), 'Department']
 
@@ -66,7 +66,7 @@ data_eIDXIDX_visits <- merge(x= data_eIDXIDX_visits, y= dictionary_pay_cylces, b
 
 # Importing Epic Data -----------------------------------------------------
 list_path_data_Epic <- as.list(choose.files(caption = "Select Epic file(s)" , multi = T))
-list_data_Epic <- lapply(list_data_Epic, function(x) read_xlsx(path = x, sheet = 1, skip = 1))
+list_data_Epic <- lapply(list_path_data_Epic, function(x) read_xlsx(path = x, sheet = 1, skip = 1))
 
 # Pre Processing Epic Data ------------------------------------------------
   merge_multiple_dataframes <- function(list.dfs){
