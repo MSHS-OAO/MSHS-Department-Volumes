@@ -4,7 +4,12 @@ library(xlsx)
 library(dplyr)
 
 # Importing Dictionaries --------------------------------------------------
-dictionary_pay_cylces <-  read_xlsx('Pay Cycles.xlsx', sheet = 1, col_types = c('date', 'skip', 'skip', 'skip', 'skip','skip', 'skip','skip', 'skip','skip','date', 'date', 'skip'))
+if (exists('Pay Cycles.xlsx')){
+dictionary_pay_cylces <-  read_xlsx('Pay Cycles.xlsx', sheet = 1, col_types = c('date', 'skip', 'skip', 'skip', 'skip','skip', 'skip','skip', 'skip','skip','date', 'date', 'skip'))  
+}else{
+  path_dictionary_pay_cylces <- choose.files(caption = "Select Pay Cycles File", multi = F) 
+dictionary_pay_cylces <-  read_xlsx(path_dictionary_pay_cylces, sheet = 1, col_types = c('date', 'skip', 'skip', 'skip', 'skip','skip', 'skip','skip', 'skip','skip','date', 'date', 'skip'))  
+}
   dictionary_pay_cylces$Date <- as.Date(dictionary_pay_cylces$Date)
   dictionary_pay_cylces$`Start Date` <- as.Date(dictionary_pay_cylces$`Start Date` )
   dictionary_pay_cylces$`End Date` <- as.Date(dictionary_pay_cylces$`End Date` )
