@@ -101,14 +101,14 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
 #Date Range Check 
   #eIDX/IDX
     choices_date_range_eIDX <- format(unique(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)`), "%m/%d/%Y")
-    remove_dates_eIDX <- select.list(choices = c('None', choices_date_range_eIDX), title = "eIDX/IDX: Any Dates to Remove?", multiple = T, graphics = T, preselect ='None' )
+    remove_dates_eIDX <- select.list(choices = c('None', choices_date_range_eIDX), title = "eIDX/IDX:Remove Dates?", multiple = T, graphics = T, preselect ='None' )
     if (remove_dates_eIDX != 'None' | is.na(remove_dates_eIDX)) {
       remove_dates_eIDX<- as.Date(remove_dates_eIDX, tryFormats = "%m/%d/%Y")
       data_eIDXIDX_merge<- data_eIDXIDX_visits[!(data_eIDXIDX_visits$`SchDateId Date (MM/DD/YYYY)` %in% remove_dates_eIDX),]
     } #remove dates if user chooses
   #Epic
     choices_date_range_Epic <- format(unique(data_Epic$`Appt Date`), "%m/%d/%Y")
-    remove_dates_Epic <- select.list(choices = c('None', choices_date_range_Epic), title = "eIDX/IDX: Any Dates to Remove?", multiple = T, graphics = T, preselect ='None' )
+    remove_dates_Epic <- select.list(choices = c('None', choices_date_range_Epic), title = "Epic:Remove Dates?", multiple = T, graphics = T, preselect ='None' )
     if (remove_dates_Epic != 'None' | is.na(remove_dates_Epic)) {
       remove_dates_Epic<- as.Date(remove_dates_Epic, tryFormats = "%m/%d/%Y")
       data_Epic_merge<- data_Epic[!(data_Epic$`Appt Date` %in% remove_dates_Epic),]
@@ -117,7 +117,7 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
     data_eIDXIDX_merge <- data_eIDXIDX_merge[, c('Cost Center','Start Date','End Date','VolumeID', 'Sch Visit Num')]
     colnames(data_eIDXIDX_merge) <- c('Cost Center','Start Date','End Date','Volume ID', 'Volume')
     data_Epic_merge <- data_Epic_merge[,c('Cost Center','Start Date','End Date','Volume ID')]
-    data_Epic_merge <- rep(1 , length(data_Epic_merge$`Cost Center`))
+    data_Epic_merge$Volume <- rep(1 , length(data_Epic_merge$`Cost Center`))
     colnames(data_Epic_merge) <- c('Cost Center','Start Date','End Date','Volume ID', 'Volume')
 #Merging Data   
     data_visits <- rbind(data_eIDXIDX_merge, data_Epic_merge)
@@ -138,7 +138,7 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
   data_visits$`Facility ID`<- rep('630571', length(data_visits$`Cost Center`))
   data_visits$Budget <- rep('0', length(data_visits$`Cost Center`))
 #Aggregating Data
-  data_visits <- aggregate(data_visits$Volume, by = list(data_visits$`Entity ID`, data_visits$`Facility ID`, data_visits$`Cost Center`, data_visits$`Start Date`, data_visits$`End Date`, data_visits$VolumeID, data_visits$Budget), FUN = 'sum' )
+  data_visits <- aggregate(data_visits$Volume, by = list(data_visits$`Entity ID`, data_visits$`Facility ID`, data_visits$`Cost Center`, data_visits$`Start Date`, data_visits$`End Date`, data_visits$`Volume ID`, data_visits$Budget), FUN = 'sum' )
   colnames(data_visits) <- c('Corporate ID', 'Facility ID', 'Cost Center', 'Start Date', 'End Date', 'Volume ID', 'Budget', 'Volume')
 #Formatting Data
   data_visits <- arrange(data_visits,`Start Date`, `End Date`, `Cost Center`, `Volume ID`)
