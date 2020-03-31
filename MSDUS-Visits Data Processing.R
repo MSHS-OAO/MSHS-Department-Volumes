@@ -147,6 +147,6 @@ data_Epic <- merge(x=data_Epic, y=dictionary_pay_cylces, by.x = 'Appt Date', by.
   data_visits$`End Date` <- format(data_visits$`End Date`, "%m/%d/%Y")
   
 # Exporting Premier Upload File -------------------------------------------
-file_name_Premier <- paste0("MSDUS_Department Volumes_", format(range(data_visits$`Start Date`)[1], "%d%b%Y"), " to ", format(range(data_visits$`End Date`)[2], "%d%b%Y"),".csv")
+file_name_Premier <- paste0("MSDUS_Department Volumes_", format(as.Date(range(data_visits$`Start Date`)[1], "%m/%d/%Y"), "%d%b%Y"), " to ", format(as.Date(range(data_visits$`End Date`)[2], "%m/%d/%Y"), "%d%b%Y"),".csv")
 path_folder_Premier_export  <- choose.dir(caption = "Select folder to export Premier upload file")
 write.table(data_visits, file =paste0(path_folder_Premier_export,"\\", file_name_Premier), row.names = F, col.names = F, sep = ',')
