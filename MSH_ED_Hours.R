@@ -11,18 +11,20 @@ Hours <- function(){
 
 Trend <- function(){
   #append master file with the daily ed hour trend
+  library(openxlsx)
   setwd("J:/deans/Presidents/SixSigma/MSHS Productivity/Productivity/Volume - Data/MSH Data/ED Hours/Calculation Worksheets")
-  library("xlsx")
-  Master <- read.xlsx(file = "ED Hours Daily Trend.xlsx", sheetIndex = 1)
+  Master <- read.xlsx(xlsxFile = "ED Hours Daily Trend.xlsx", sheet = 1)
+  Master$Date <- as.Date(Master$Date, origin = "1899-12-30")
   colnames(Master) <- c("Date","ED LOS")
   current <<- rbind(Master,daily)
+  #current[nchar(current$Date) == 5,] <- as.Date(as.numeric(unlist(current[nchar(current$Date) == 5,][1])), origin = "1899-12-30")
   tail(current,20)
 }
 
 Save <- function(){
   #overwrite the master file and save the daily trend for the PP 
   setwd("J:/deans/Presidents/SixSigma/MSHS Productivity/Productivity/Volume - Data/MSH Data/ED Hours/Calculation Worksheets")
-  library("xlsx")
+  library(openxlsx)
   write.xlsx(current, file = "ED Hours Daily Trend.xlsx", row.names = F)
   start <- min(daily$Date)
   end <- max(daily$Date)
