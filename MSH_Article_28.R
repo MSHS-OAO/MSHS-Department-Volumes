@@ -46,12 +46,12 @@ Art28 <- function(YYYYMM){
   #Read Master Art28 file
   master <- read.csv("Art28_Master.csv",check.names=F)
   #append master file and save it back
-  master <- merge(master,volume,by="cc")
+  master <<- merge(master,volume,by="cc")
   write.csv(master,"Art28_Master.csv",row.names=F)
   head(master)
 }
 
 #enter year and month in YYYYMM format
 #for example 201802 would represent February 2018
-Art28("202002")
+Art28("202003")
 
