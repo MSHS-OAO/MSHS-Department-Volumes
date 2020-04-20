@@ -17,7 +17,6 @@ Trend <- function(){
   Master$Date <- as.Date(Master$Date, origin = "1899-12-30")
   colnames(Master) <- c("Date","ED LOS")
   current <<- rbind(Master,daily)
-  #current[nchar(current$Date) == 5,] <- as.Date(as.numeric(unlist(current[nchar(current$Date) == 5,][1])), origin = "1899-12-30")
   tail(current,20)
 }
 
