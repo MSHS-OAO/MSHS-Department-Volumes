@@ -11,8 +11,8 @@ Art28 <- function(YYYYMM){
   raw <- raw[raw$YearMo == YYYYMM,]
   #Create vector for all departments recieving volumes
   cc <<- c(01040170,01040185,01040388,01040404,01040407,01040409,01040411,
-          01040426,01040436,01040435,01040438,01040441,01040447,01040458,
-          01040460,01040464,01040473,01040477)
+           01040426,01040436,01040435,01040438,01040441,01040447,01040458,
+           01040460,01040464,01040473,01040477)
   #Create each specific volume dataframe
   volume1 <- raw[raw$`Clinic Code` %in% c("HI196","HI198","RE930","RE994"),]
   volume2 <- raw[raw$`Clinic Code` %in% c("MH349",	"MH346"),]
@@ -46,12 +46,12 @@ Art28 <- function(YYYYMM){
   #Read Master Art28 file
   master <- read.csv("Art28_Master.csv",check.names=F)
   #append master file and save it back
-  master <- merge(master,volume,by="cc")
+  master <<- merge(master,volume,by="cc")
   write.csv(master,"Art28_Master.csv",row.names=F)
   head(master)
 }
 
 #enter year and month in YYYYMM format
 #for example 201802 would represent February 2018
-Art28("202005")
+Art28("202003")
 
