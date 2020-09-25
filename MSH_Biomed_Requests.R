@@ -54,8 +54,8 @@ biweekly <- function(start,end,pp1,pp2,pp3="1/1/2050"){
 #a will equal the first pay period volume
 #b will equal the second pay period volume
 #c will equal the third pay period volume
-biweekly(start="06/21/2020",end="08/01/2020",pp1="07/04/2020",
-         pp2="07/18/2020",pp3 = "08/01/2020")
+biweekly(start="08/02/2020",end="08/29/2020",pp1="08/15/2020",
+         pp2="08/29/2020")
 
 
 
