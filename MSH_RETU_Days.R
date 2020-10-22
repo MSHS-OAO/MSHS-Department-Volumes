@@ -23,7 +23,7 @@ RETUdays <- function(start, pp1, pp2, pp3 = "1/1/2050"){
 }
 
 #start is the first day of the first pp. pp1 is end date of first pp. pp2 is end date of second pp
-RETUdays(start="08/02/2020", pp1="08/15/2020", pp2="08/29/2020")
+RETUdays(start="08/30/2020", pp1="09/12/2020", pp2="09/26/2020")
 
 #Outputs pateint day totals for pp1 and pp2
 pp1days
