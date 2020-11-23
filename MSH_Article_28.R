@@ -6,7 +6,7 @@ Art28 <- function(YYYYMM){
   #Read the raw excel file from Doran
   raw <- readxl::read_excel(file.choose())
   #assign column names
-  colnames(raw) <- c("YearMo","Clinic Group","Clinic Group Description","Clinic Code","Payor Group","Encounters")
+  colnames(raw) <- c("YearMo","Clinic Group","Clinic Group Description","Clinic Code","Attending MD","Payor Group","Encounters")
   #filter on the month and year
   raw <- raw[raw$YearMo == YYYYMM,]
   #Create vector for all departments recieving volumes
@@ -52,5 +52,5 @@ Art28 <- function(YYYYMM){
 
 #enter year and month in YYYYMM format
 #for example 201802 would represent February 2018
-Art28("202009")
+Art28("202010")
 
