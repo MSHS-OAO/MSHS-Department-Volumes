@@ -52,5 +52,5 @@ Art28 <- function(YYYYMM){
 
 #enter year and month in YYYYMM format
 #for example 201802 would represent February 2018
-Art28("202010")
+Art28("202011")
 
