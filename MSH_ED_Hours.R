@@ -9,15 +9,15 @@ Hours <- function(){
   daily <- aggregate(`ED LOS`~Date,raw,sum)
   daily <- daily %>% filter(Date >= as.Date(start, format = "%m/%d/%Y"),
                             Date <= as.Date(end, format = "%m/%d/%Y"))
-  daily
+  return(daily)
 }
 
 Trend <- function(){
   #append master file with the daily ed hour trend
   library(openxlsx)
   setwd("J:/deans/Presidents/SixSigma/MSHS Productivity/Productivity/Volume - Data/MSH Data/ED Hours/Calculation Worksheets")
-  Master <- read.xlsx(xlsxFile = "ED Hours Daily Trend.xlsx", sheet = 1)
-  Master$Date <- as.Date(Master$Date, origin = "1899-12-30")
+  Master <- read.xlsx(xlsxFile = "ED Hours Daily Trend.xlsx", sheet = 1, detectDates = T)
+  #Master$Date <- as.Date(Master$Date, origin = "1899-12-30")
   colnames(Master) <- c("Date","ED LOS")
   current <<- rbind(Master,daily)
   tail(current,29)
@@ -44,9 +44,9 @@ Save <- function(){
 }
 
 #gives a daily ED hour total for the PP
-start <- "08/29/2021"
-end <- "09/25/2021"
-Hours()
+start <- "09/26/2021"
+end <- "10/23/2021"
+daily <- Hours()
 #appends the "daily" dataframe to the master
 Trend()
 #gives ED Hour sum for the PP. Input this into the upload tracker
