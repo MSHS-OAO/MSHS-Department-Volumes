@@ -5,8 +5,7 @@ library(tidyverse)
 library(openxlsx)
 
 # Constants ---------------------------------------------------------------
-dir <- "J:/deans/Presidents/SixSigma/MSHS Productivity/Productivity/Volume - Data/Multisite Volumes/CSPD/Source Data/"
-# setwd(dir)
+dir <- "J:/deans/Presidents/SixSigma/MSHS Productivity/Productivity/Volume - Data/Multisite Volumes/CSPD"
 
 sheet <- excel_sheets(paste0(dir,"MSHS Central Sterile Volume Template Updated.xlsx")) #setting sheet constant equal to names of excel sheets
 
@@ -14,7 +13,12 @@ start.date <- as.Date("2021-10-24", format = "%Y-%m-%d")
 end.date <- as.Date("2021-11-20", format = "%Y-%m-%d")
 # Load Data & Dictionaries ------------------------------------------------
 
-CSPDdf <- lapply(sheet, function(x){read_excel(paste0(dir,"MSHS Central Sterile Volume Template Updated.xlsx"), sheet = x, col_names = TRUE)})
+CSPDdf <- lapply(sheet,
+                 function(x){read_excel(
+                   paste0(dir, "/Source Data/",
+                          "MSHS Central Sterile Volume Template Updated.xlsx"),
+                   sheet = x,
+                   col_names = TRUE)})
 
 CSPDdf <- bind_rows(CSPDdf, .id = "Sheet") %>% #Combine sheets into one
   
@@ -88,8 +92,11 @@ new_master <- rbind(old_master, CSPDdf1)
 
 
 #4 save new master, validation, upload
-saveRDS(new_master, "J:/deans/Presidents/SixSigma/MSHS Productivity/Productivity/Volume - Data/Multisite Volumes/CSPD/Master/Master.rds")
+saveRDS(new_master, paste0(dir, "/Master/Master.rds"))
 
 write.table(validation, "J:\\deans\\Presidents\\SixSigma\\MSHS Productivity\\Productivity\\Volume - Data\\Multisite Volumes\\CSPD\\CSPD Validation", row.names = FALSE, col.names = F)
 
-write.table(CSPDdf1, "J:\\deans\\Presidents\\SixSigma\\MSHS Productivity\\Productivity\\Volume - Data\\Multisite Volumes\\CSPD\\CSPDtest.csv", row.names = FALSE, col.names = F)
+write.table(CSPDdf1, "J:\\deans\\Presidents\\SixSigma\\MSHS Productivity\\Productivity\\Volume - Data\\Multisite Volumes\\CSPD\\CSPDtest.csv",
+            row.names = FALSE,
+            col.names = F,
+            sep = ",")
