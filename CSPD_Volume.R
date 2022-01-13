@@ -4,7 +4,8 @@ library(tidyverse)
 library(openxlsx)
 
 # Constants ----------------------------------------------------------------
-dir <- "J:/deans/Presidents/SixSigma/MSHS Productivity/Productivity/Volume - Data/Multisite Volumes/CSPD"
+dir <- paste0("J:/deans/Presidents/SixSigma/MSHS Productivity/Productivity",
+              "/Volume - Data/Multisite Volumes/CSPD")
 
 #setting sheet constant equal to names of excel sheets
 sheet <- excel_sheets(paste0(dir, "/Source Data/",
@@ -12,10 +13,11 @@ sheet <- excel_sheets(paste0(dir, "/Source Data/",
 
 start_date <- as.Date("2021-10-24", format = "%Y-%m-%d")
 end_date <- as.Date("2021-11-20", format = "%Y-%m-%d")
+
 # Load Data & Dictionaries -------------------------------------------------
 #Pull in mapping file
 volume_mapping <- read_excel(paste0(dir,
-                                "/MSHS_Cost Center & Vol ID Mapping File.xlsx"), 
+                                "/MSHS_Cost Center & Vol ID Mapping File.xlsx"),
                              col_types = c(rep("text", 6)))
 
 CSPDdf <- lapply(sheet,
