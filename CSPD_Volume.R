@@ -7,18 +7,20 @@ library(openxlsx)
 dir <- paste0("J:/deans/Presidents/SixSigma/MSHS Productivity/Productivity",
               "/Volume - Data/Multisite Volumes/CSPD")
 
-#setting sheet constant equal to names of excel sheets
-sheet <- excel_sheets(paste0(dir, "/Source Data/",
-                          "MSHS Central Sterile Volume Template Updated.xlsx"))
-
-start_date <- as.Date("2021-10-24", format = "%Y-%m-%d")
-end_date <- as.Date("2021-11-20", format = "%Y-%m-%d")
+#User inputs start and end dates for current period
+start_date <- as.Date("2021-11-21", format = "%Y-%m-%d")
+end_date <- as.Date("2022-01-01", format = "%Y-%m-%d")
 
 # Load Data & Dictionaries -------------------------------------------------
 #Pull in mapping file
 volume_mapping <- read_excel(paste0(dir,
                                 "/MSHS_Cost Center & Vol ID Mapping File.xlsx"),
                              col_types = c(rep("text", 6)))
+
+#Preprocessing-------------------------------------------------------------
+#Assigning sheet to the names of the excel sheets
+sheet <- excel_sheets(paste0(dir, "/Source Data/",
+                          "MSHS Central Sterile Volume Template Updated.xlsx"))
 
 CSPDdf <- lapply(sheet,
                  function(x) {
@@ -29,11 +31,8 @@ CSPDdf <- lapply(sheet,
                      col_names = TRUE)})
 
 CSPDdf <- bind_rows(CSPDdf, .id = "Sheet") %>% #Combine sheets into one
-  
-  #Preprocessing-------------------------------------------------------------
-select(3:11) #Select necessary columns
 
-head(CSPDdf)
+select(3:11) #Select necessary columns
 
 colnames(CSPDdf) <- CSPDdf[1, ]
 CSPDdf <- CSPDdf[-1, ] #Make first row into column headers
@@ -44,6 +43,7 @@ CSPDdf$`Decontam Totals` <- CSPDdf$`Assembly Totals`
 CSPDdf <- CSPDdf %>%
   filter(`Volume ID` != "Volume ID")
 
+#Filters out rows that repeat column headers and adds department ID for Queens
 CSPDdf <- CSPDdf %>%
   filter(!is.na(`Decontam Totals`),
          !is.na(`Assembly Totals`),
@@ -60,6 +60,7 @@ CSPDdf <- CSPDdf %>%
 #Convert volume columns to numeric
 CSPDdf[, c(6:9)] <- sapply(CSPDdf[, c(6:9)], as.numeric)
 
+#Formats dates
 CSPDdf <- CSPDdf %>%
   mutate(`Start Date` = convertToDate(`Start Date`),
          `End Date` = convertToDate(`End Date`)) %>%
@@ -73,12 +74,12 @@ CSPDdf <- CSPDdf %>%
          `End Date` = as.Date(`End Date`, format = "%m/%d/%Y"))
 
 
-
+#Sums up volume columns into one
 CSPDdf <- CSPDdf %>%
   rowwise() %>%
   mutate(Volume = round(sum(c_across(`Assembly Totals`:
                                        `Inventory Reporting (Send) Totals`)),
-                        digits = 2)) #Sums up volume columns into one
+                        digits = 2))
 
 #Adds necessary columns and creates table
 CSPDdf1 <- CSPDdf %>%
@@ -93,28 +94,26 @@ CSPDdf1 <- CSPDdf %>%
   mutate(`Start Date` = as.character(`Start Date`, format = "%m/%d/%Y"),
          `End Date` = as.character(`End Date`, format = "%m/%d/%Y"))
 
-#CREATE DATA REPOSITORY
+#DATA REPOSITORY---------------------------------------------------------
 #1 read master
-old_master <- readRDS("J:/deans/Presidents/SixSigma/MSHS Productivity/",
-                      "Productivity/Volume - Data/Multisite Volumes/CSPD/",
-                      "Master/Master.rds")
+old_master <- readRDS(paste0(dir, "/Master/Master.rds"))
 
 #2 append master (2-3 pay periods of data)
 new_master <- rbind(old_master, CSPDdf1)
+  saveRDS(new_master, paste0(dir, "/Master/Master.rds"))
 
 #3 validation
 validation <- CSPDdf1 %>%
   pivot_wider(id_cols = `Department ID`, names_from = `End Date`,
               values_from = Volume)
 
-#4 save new master, validation, upload
-saveRDS(new_master, paste0(dir, "/Master/Master.rds"))
+#4 Validation and upload
+write.table(validation, paste0(dir, "/CSPD Validation.csv"),
+            row.names = F,
+            col.names = F,
+            sep = ",")
 
-write.table(validation, "J:/deans/Presidents/SixSigma/MSHS Productivity/",
-            "Productivity/Volume - Data/Multisite Volumes/CSPD/CSPD Validation",
-            row.names = FALSE, col.names = F)
-
-write.table(CSPDdf1, "J:/deans/Presidents/SixSigma/MSHS Productivity/Productivity/Volume - Data/Multisite Volumes/CSPD/Multisite_CSPD Volumes_.csv",
-            row.names = FALSE,
+write.table(CSPDdf1, paste0(dir, "/Multisite_CSPD Volumes_.csv"),
+            row.names = F,
             col.names = F,
             sep = ",")
