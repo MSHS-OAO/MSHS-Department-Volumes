@@ -1,6 +1,7 @@
 # Libraries ---------------------------------------------------------------
 library(tidyverse)
 library(readxl)
+library(xlsx)
 
 # Constants ---------------------------------------------------------------
 start_date <- as.Date("2022-01-02")
@@ -148,7 +149,8 @@ upload_file <- rad_data %>%
 # Creating Quality Chart --------------------------------------------------
 quality_chart <- rad_data %>%
   select(Org, `Cost Center`, `Pay Period End Date`) %>%
-  mutate(Volume = 1) %>%
+  mutate(Volume = 1,
+         `Pay Period End Date` = format(`Pay Period End Date`, "%d%b%y")) %>%
   pivot_wider(values_from = "Volume",
               values_fn = sum,
               names_from = "Pay Period End Date") %>%
@@ -171,3 +173,10 @@ write.table(upload_file,
 #Exporting RDS data
 
 #Exporting Quality Chart
+write.xlsx2(quality_chart,
+            file = paste0(dir_files,
+                          "/MSMW_Quality Chart_Radiology RIS CPT Data _",
+                          format(Sys.Date(), format = "%d%b%y"),
+                          ".xlsx"),
+            sheetName = "MSMW")
+
