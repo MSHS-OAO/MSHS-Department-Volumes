@@ -4,15 +4,15 @@ library(readxl)
 library(xlsx)
 
 # Constants ---------------------------------------------------------------
-start_date <- as.Date("2022-01-02")
-end_date <- as.Date("2022-01-29")
+start_date <- as.Date("2022-01-30")
+end_date <- as.Date("2022-02-26")
 #Defining paths
 dir <- paste0("J:/deans/Presidents/SixSigma/MSHS Productivity",
               "/Productivity/Volume - Data")
 dir_cdm <- paste0(dir, "/CDMs/MSMW")
 dir_files <- paste0(dir, "/MSLW Data/Both Sites Data/Radiology_RIS Data")
-dir_universal <- paste0("J:/deans/Presidents/SixSigma/MSHS Productivity",
-                        "/Productivity/Universal Data")
+dir_universal <- paste0('J:/deans/Presidents/SixSigma/MSHS Productivity',
+                        '/Productivity/Universal Data')
 
 # Import Data -------------------------------------------------------------
 #Listing all data files in the source data folder
@@ -171,6 +171,7 @@ write.table(upload_file,
             sep = ",", row.names = F, col.names = F)
 
 #Exporting RDS data
+#TBD
 
 #Exporting Quality Chart
 write.xlsx2(quality_chart,
