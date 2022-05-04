@@ -44,8 +44,8 @@ Save <- function(){
 }
 
 #gives a daily ED hour total for the PP
-start <- "01/30/2022"
-end <- "02/26/2022"
+start <- "02/27/2022"
+end <- "03/26/2022"
 daily <- Hours()
 #appends the "daily" dataframe to the master
 Trend()
